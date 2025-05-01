@@ -1,5 +1,5 @@
 # ML Apprentice Take-Home Assessment
-
+# logit -- raw unnormalized output of a model before applying a probability function like sigmoid, and then pass through function to get actual probabilities 
 # Goal
 
 The goal of this assessment is to work with neural network architectures, specifically transformers and multi-task learning
@@ -33,3 +33,45 @@ Embedding (first 5 values): [0.08390495181083679, 0.05580494925379753, -0.213898
 Sentence 3: Purdue University is a great place to study Computer Science.
 Embedding shape: torch.Size([768])
 Embedding (first 5 values): [0.06927134841680527, 0.1761387437582016, 0.01445331983268261, 0.3833419382572174, 0.4592837691307068]
+
+## Task 2: Multi-Task Learning Expansion
+
+For Task 2, I extended the sentence transformer model to support multi-task learning. The idea behind multi-task learning is to train a single shared model on multiple related tasks, which can improve generalization and reduce the number of parameters compared to training separate models for each task.
+
+### Model Architecture
+
+I built a class called `MultiTaskModel` using PyTorch. The core of the model is the same transformer encoder from Task 1 (`distilbert-base-uncased`), which acts as a shared feature extractor. I then added two task-specific heads on top of the shared encoder for our 2 differnen tasks:
+
+- **Task A – Sentence Classification**: This head is a linear layer that outputs logits for 3 made-up classes. It could represent something like topic classification (e.g., "greeting", "identity", "education").
+- **Task B – Sentiment Analysis**: This head outputs logits for 2 classes (positive or negative sentiment). I used a simple linear classifier here as well.
+
+### Pooling Strategy
+
+Just like in Task 1, I used **mean pooling** to convert token-level embeddings into a fixed-size sentence embedding. This pooled embedding is passed into both task heads. I stuck with mean pooling because it’s robust and performs well for sentence-level tasks without requiring extra layers or complexity.
+
+### Inference & Testing
+
+I wrote a separate script, `test_multitask.py`, to test the model with the same sentences from Task 1. The script prints the logits produced by each task head. Here’s an example of what the output looked like:
+
+=== Task A: Sentence Classification Logits ===
+
+Sentence 1: Hello, how are you?
+Logits (Task A): [0.16352327167987823, 0.2980576455593109, -0.3741283416748047]
+
+Sentence 2: My name is Anshul
+Logits (Task A): [0.0938272476196289, 0.14478030800819397, -0.24297648668289185]
+
+Sentence 3: Purdue University is a great place to study Computer Science.
+Logits (Task A): [0.2300703078508377, 0.20275598764419556, -0.34060847759246826]
+
+
+=== Task B: Sentiment Analysis Logits ===
+
+Sentence 1: Hello, how are you?
+Logits (Task B): [-0.4396241009235382, -0.07834406197071075]
+
+Sentence 2: My name is Anshul
+Logits (Task B): [-0.26447242498397827, -0.06079651415348053]
+
+Sentence 3: Purdue University is a great place to study Computer Science.
+Logits (Task B): [-0.23500744998455048, 0.114423468708992]
