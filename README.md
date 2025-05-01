@@ -145,3 +145,6 @@ From the project root:
 ```bash
 docker build -t ml-apprentice .
 
+run this - docker run --rm ml-apprentice
+
+
