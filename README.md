@@ -101,3 +101,37 @@ The transformer's top layers should be unfrozen, while the lower layers should b
 - Why don't we freeze everything? 
 Excessive freezing prevents the model from learning anything new. However, overfitting can also result from not freezing anything, particularly if my dataset is too little or deviates from what the model predicts.
 
+## Task 4 - Training Loop Implementation
+
+For the bonus task, I implemented a basic multi-task training loop to simulate how this model would be trained in practice. I created a small fake data generator that outputs a batch of 4 hardcoded sentences along with randomly generated class labels for both Task A and Task B.
+
+### What the Training Loop Does
+
+The training script (`train_multitask.py`) shows how you would:
+
+1. Pass a batch of input sentences through the shared transformer encoder
+2. Get separate logits from the two task heads
+3. Compute two different losses using `CrossEntropyLoss` — one per task
+4. Combine the losses (by summing them) and call `backward()` to backpropagate
+5. Step the optimizer to update weights
+
+Even though the labels and data are fake, the code structure is real and would work with any properly formatted dataset. It demonstrates how a multi-task model is trained with **two objectives at once**, and how you can track each task’s performance individually.
+
+### Why This Matters
+
+This helped me understand how multi-task learning actually works behind the scenes — not just at the model level, but also how training is managed. I had to think about things like:
+
+- Combining different loss functions
+- Making sure the model updates both heads and the encoder
+- Logging metrics separately for each task
+
+This task made the whole multi-task concept more concrete for me.
+
+### Output
+Starting dummy training loop...
+
+Epoch 1 | Total Loss: 1.7130 | Task A Loss: 1.0070 | Task B Loss: 0.7060
+Epoch 2 | Total Loss: 1.7515 | Task A Loss: 0.9455 | Task B Loss: 0.8061
+Epoch 3 | Total Loss: 2.0482 | Task A Loss: 1.1667 | Task B Loss: 0.8815
+
+This shows that the model updates and computes both task losses independently, as it would during a real training process
