@@ -135,3 +135,13 @@ Epoch 2 | Total Loss: 1.7515 | Task A Loss: 0.9455 | Task B Loss: 0.8061
 Epoch 3 | Total Loss: 2.0482 | Task A Loss: 1.1667 | Task B Loss: 0.8815
 
 This shows that the model updates and computes both task losses independently, as it would during a real training process
+
+# Docker Functionality
+To make the project easy to run in any environment, a `Dockerfile` is included.
+
+### Build the Docker image:
+From the project root:
+
+```bash
+docker build -t ml-apprentice .
+
