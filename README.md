@@ -75,3 +75,29 @@ Logits (Task B): [-0.26447242498397827, -0.06079651415348053]
 
 Sentence 3: Purdue University is a great place to study Computer Science.
 Logits (Task B): [-0.23500744998455048, 0.114423468708992]
+
+# Task 3 Writeup -- Training Considerations
+
+The task asked me to think througha some different training scenarios and how to apply transfer learning if we had to. 
+
+Freezing Scenarios -
+#### 1. Freeze the entire network
+
+If we freeze both the transformer and task heads, the model is only useful for interference and becomes static. It basically turns into a fixed feature extractor. This means I would still be able to pass new sentences and get predictions but wouldn't be able to improve the model by training it. This could be useful if I want to reuse a pre trained model on new data without any change, but would not helpif the new tasks are different compared to the original trained task 
+
+#### 2. If only the transformer backbone should be frozen
+
+When I was watching tutorials to learn, this was very common. The idea behind it was that the transformer encoder like DistilBERT had already learned a lot of general language understanding from a huge dataset. So instead of retraining the whole transformer, I can keep the weights frozen and just train the task specific layers that I added for A and B. This saves training time and works well without a lot of labeled data 
+
+#### 3. If only one of the task-specific heads (either for Task A or Task B) should be frozen.
+
+If I freeze a task specific head like Task A or B, this means that I trust that part of the model and don't want any change to occur to it. If I know the task is performing well, then tis would be a great idea and I would want to improve the other task, as this would help avoid overfitting while learning on the other. 
+
+### Transfer Learning
+
+This is how I would approach each area if I were fine-tuning this model: 
+- Pre-trained model: Since the `distilbert-base-uncased` has previously been trained on a substantial corpus of texts and is effective, I would utilize it.
+The transformer's top layers should be unfrozen, while the lower layers should be frozen. If this was the case, it allows the model to adjust to my particular needs while retaining some of the broad information it already possesses (such as sentence structure or word correlations that it has already learned).
+- Why don't we freeze everything? 
+Excessive freezing prevents the model from learning anything new. However, overfitting can also result from not freezing anything, particularly if my dataset is too little or deviates from what the model predicts.
+
